@@ -20,25 +20,30 @@ import { homeThreeMasonryBanner as masonryBanner } from "@framework/static/banne
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { ROUTES } from "@utils/routes";
 import { GetStaticProps } from "next";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
 export default function Home() {
 	const [show, setShow] = useState(false);
 	const [notification, setNotification] = useState({title: '', body: ''});
 	const [isTokenFound, setTokenFound] = useState(false);
 	console.log(show,notification,isTokenFound)
-		const initTerminal = async () => {
-			const { getToken,onMessageListener } = await import('./firebase')
-			// Add logic with `term`
-			getToken(setTokenFound);
-			
-			onMessageListener().then(payload => {
-			setShow(true);
-			setNotification({title: payload.notification.title, body: payload.notification.body})
-			console.log(payload);
-			}).catch(err => console.log('failed: ', err)); 
-		}
-		initTerminal()
+		useEffect(() => {
+			const initTerminal = async () => {
+				const { getToken,onMessageListener } = await import('./firebase')
+				// Add logic with `term`
+				getToken(setTokenFound);
+				
+				onMessageListener().then(payload => {
+				setShow(true);
+				setNotification({title: payload.notification.title, body: payload.notification.body})
+				console.log(payload);
+				}).catch(err => console.log('failed: ', err)); 
+			}
+			initTerminal()
+		}, [ ])
+	
+		
+		
 	return (
 		<>
 			<BannerBlock data={masonryBanner} />
